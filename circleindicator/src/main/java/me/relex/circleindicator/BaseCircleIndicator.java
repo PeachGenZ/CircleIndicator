@@ -34,8 +34,9 @@ class BaseCircleIndicator extends LinearLayout {
 //    protected Animator mImmediateAnimatorOut;
 //    protected Animator mImmediateAnimatorIn;
 
-    protected ValueAnimator animatorIn;
-    protected ValueAnimator animatorOut;
+    protected ValueAnimator selectedAnimation;
+    protected ValueAnimator backToNormalAnimation;
+    protected ValueAnimator immediateBackToNormalAnimation;
 
     protected int mLastPosition = -1;
 
@@ -126,10 +127,10 @@ class BaseCircleIndicator extends LinearLayout {
         setOrientation(config.orientation == VERTICAL ? VERTICAL : HORIZONTAL);
         setGravity(config.gravity >= 0 ? config.gravity : Gravity.CENTER);
 
-        animatorIn = ValueAnimator.ofFloat(1f, 4f);
-        animatorIn.setInterpolator(new FastOutSlowInInterpolator());
-        animatorIn.setDuration(300);
-        animatorIn.addListener(new Animator.AnimatorListener() {
+        immediateBackToNormalAnimation = ValueAnimator.ofFloat(4f, 1f);
+        immediateBackToNormalAnimation.setInterpolator(new FastOutSlowInInterpolator());
+        immediateBackToNormalAnimation.setDuration(0);
+        immediateBackToNormalAnimation.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation, boolean isReverse) {
 
@@ -137,7 +138,7 @@ class BaseCircleIndicator extends LinearLayout {
 
             @Override
             public void onAnimationEnd(Animator animation, boolean isReverse) {
-                animatorIn.removeAllUpdateListeners();
+                immediateBackToNormalAnimation.removeAllUpdateListeners();
             }
 
             @Override
@@ -147,7 +148,7 @@ class BaseCircleIndicator extends LinearLayout {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                animatorIn.removeAllUpdateListeners();
+                immediateBackToNormalAnimation.removeAllUpdateListeners();
             }
 
             @Override
@@ -160,10 +161,10 @@ class BaseCircleIndicator extends LinearLayout {
 
             }
         });
-        animatorOut = ValueAnimator.ofFloat(4f, 1f);
-        animatorOut.setInterpolator(new FastOutSlowInInterpolator());
-        animatorOut.setDuration(300);
-        animatorOut.addListener(new Animator.AnimatorListener() {
+        selectedAnimation = ValueAnimator.ofFloat(1f, 4f);
+        selectedAnimation.setInterpolator(new FastOutSlowInInterpolator());
+        selectedAnimation.setDuration(300);
+        selectedAnimation.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation, boolean isReverse) {
 
@@ -171,7 +172,7 @@ class BaseCircleIndicator extends LinearLayout {
 
             @Override
             public void onAnimationEnd(Animator animation, boolean isReverse) {
-                animatorOut.removeAllUpdateListeners();
+                selectedAnimation.removeAllUpdateListeners();
             }
 
             @Override
@@ -181,7 +182,7 @@ class BaseCircleIndicator extends LinearLayout {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                animatorOut.removeAllUpdateListeners();
+                selectedAnimation.removeAllUpdateListeners();
             }
 
             @Override
@@ -194,6 +195,42 @@ class BaseCircleIndicator extends LinearLayout {
 
             }
         });
+        backToNormalAnimation = ValueAnimator.ofFloat(4f, 1f);
+        backToNormalAnimation.setInterpolator(new FastOutSlowInInterpolator());
+        backToNormalAnimation.setDuration(300);
+        backToNormalAnimation.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation, boolean isReverse) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation, boolean isReverse) {
+                backToNormalAnimation.removeAllUpdateListeners();
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                backToNormalAnimation.removeAllUpdateListeners();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+
+        refreshAnimation();
     }
 
     public interface IndicatorCreatedListener {
@@ -294,14 +331,14 @@ class BaseCircleIndicator extends LinearLayout {
             return;
         }
 
-        if (animatorIn.isRunning()) {
-            animatorIn.end();
-            animatorIn.cancel();
+        if (selectedAnimation.isRunning()) {
+            selectedAnimation.end();
+            selectedAnimation.cancel();
         }
 
-        if (animatorOut.isRunning()) {
-            animatorOut.end();
-            animatorOut.cancel();
+        if (backToNormalAnimation.isRunning()) {
+            backToNormalAnimation.end();
+            backToNormalAnimation.cancel();
         }
 
         View currentIndicator;
@@ -310,7 +347,7 @@ class BaseCircleIndicator extends LinearLayout {
             currentIndicator.setBackgroundResource(mIndicatorUnselectedBackgroundResId);
 //            mAnimatorIn.setTarget(currentIndicator);
 //            mAnimatorIn.start();
-            playOutAnimation(currentIndicator, mIndicatorWidth);
+            playBackToNormalAnimation(currentIndicator, mIndicatorWidth);
         }
 
         View selectedIndicator = getChildAt(position);
@@ -319,29 +356,46 @@ class BaseCircleIndicator extends LinearLayout {
             selectedIndicator.setBackgroundResource(mIndicatorBackgroundResId);
 //            mAnimatorOut.setTarget(selectedIndicator);
 //            mAnimatorOut.start();
-            playInAnimation(selectedIndicator, mIndicatorWidth);
+            playSelectedAnimation(selectedIndicator, mIndicatorWidth);
         }
         mLastPosition = position;
     }
 
-    protected void playInAnimation(View view, int originalWidth) {
-        animatorIn.addUpdateListener(animation -> {
+    protected void playSelectedAnimation(View view, int originalWidth) {
+        selectedAnimation.addUpdateListener(animation -> {
                     ViewGroup.LayoutParams params = view.getLayoutParams();
                     params.width = (int) (originalWidth * ((float) animation.getAnimatedValue()));
                     view.setLayoutParams(params);
                 }
         );
-        animatorIn.start();
+        selectedAnimation.start();
     }
 
-    protected void playOutAnimation(View view, int originalWidth) {
-        animatorOut.addUpdateListener(animation -> {
+    protected void playBackToNormalAnimation(View view, int originalWidth) {
+        backToNormalAnimation.addUpdateListener(animation -> {
                     ViewGroup.LayoutParams params = view.getLayoutParams();
                     params.width = (int) (originalWidth * ((float) animation.getAnimatedValue()));
                     view.setLayoutParams(params);
                 }
         );
-        animatorOut.start();
+        backToNormalAnimation.start();
+    }
+
+    protected void playImmediateBackToNormalAnimation(View view, int originalWidth) {
+        immediateBackToNormalAnimation.addUpdateListener(animation -> {
+                    ViewGroup.LayoutParams params = view.getLayoutParams();
+                    params.width = (int) (originalWidth * ((float) animation.getAnimatedValue()));
+                    view.setLayoutParams(params);
+                }
+        );
+        immediateBackToNormalAnimation.start();
+    }
+
+    protected void refreshAnimation() {
+        for(int index = 0; index < getChildCount(); index++) {
+            View nextChild = getChildAt(index);
+            playImmediateBackToNormalAnimation(nextChild, mIndicatorWidth);
+        }
     }
 
     protected class ReverseInterpolator implements Interpolator {
