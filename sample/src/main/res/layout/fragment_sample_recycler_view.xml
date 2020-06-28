@@ -15,6 +15,7 @@
         android:layout_height="48dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="48dp"
+        app:ci_margin="4dp"
         app:ci_drawable="@drawable/my_radius_selected"
         app:ci_drawable_unselected="@drawable/my_radius"/>
 

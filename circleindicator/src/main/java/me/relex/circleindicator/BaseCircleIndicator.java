@@ -30,10 +30,10 @@ class BaseCircleIndicator extends LinearLayout {
     protected int mIndicatorBackgroundResId;
     protected int mIndicatorUnselectedBackgroundResId;
 
-    protected Animator mAnimatorOut;
-    protected Animator mAnimatorIn;
-    protected Animator mImmediateAnimatorOut;
-    protected Animator mImmediateAnimatorIn;
+//    protected Animator mAnimatorOut;
+//    protected Animator mAnimatorIn;
+//    protected Animator mImmediateAnimatorOut;
+//    protected Animator mImmediateAnimatorIn;
 
     protected ValueAnimator animatorIn;
     protected ValueAnimator animatorOut;
@@ -110,13 +110,13 @@ class BaseCircleIndicator extends LinearLayout {
         mIndicatorHeight = (config.height < 0) ? miniSize : config.height;
         mIndicatorMargin = (config.margin < 0) ? miniSize : config.margin;
 
-        mAnimatorOut = createAnimatorOut(config);
-        mImmediateAnimatorOut = createAnimatorOut(config);
-        mImmediateAnimatorOut.setDuration(0);
+//        mAnimatorOut = createAnimatorOut(config);
+//        mImmediateAnimatorOut = createAnimatorOut(config);
+//        mImmediateAnimatorOut.setDuration(0);
 
-        mAnimatorIn = createAnimatorIn(config);
-        mImmediateAnimatorIn = createAnimatorIn(config);
-        mImmediateAnimatorIn.setDuration(0);
+//        mAnimatorIn = createAnimatorIn(config);
+//        mImmediateAnimatorIn = createAnimatorIn(config);
+//        mImmediateAnimatorIn.setDuration(0);
 
         mIndicatorBackgroundResId =
                 (config.backgroundResId == 0) ? R.drawable.white_radius : config.backgroundResId;
@@ -228,15 +228,15 @@ class BaseCircleIndicator extends LinearLayout {
     }
 
     public void createIndicators(int count, int currentPosition) {
-        if (mImmediateAnimatorOut.isRunning()) {
-            mImmediateAnimatorOut.end();
-            mImmediateAnimatorOut.cancel();
-        }
+//        if (mImmediateAnimatorOut.isRunning()) {
+//            mImmediateAnimatorOut.end();
+//            mImmediateAnimatorOut.cancel();
+//        }
 
-        if (mImmediateAnimatorIn.isRunning()) {
-            mImmediateAnimatorIn.end();
-            mImmediateAnimatorIn.cancel();
-        }
+//        if (mImmediateAnimatorIn.isRunning()) {
+//            mImmediateAnimatorIn.end();
+//            mImmediateAnimatorIn.cancel();
+//        }
 
         // Diff View
         int childViewCount = getChildCount();
@@ -256,14 +256,14 @@ class BaseCircleIndicator extends LinearLayout {
             indicator = getChildAt(i);
             if (currentPosition == i) {
                 indicator.setBackgroundResource(mIndicatorBackgroundResId);
-                mImmediateAnimatorOut.setTarget(indicator);
-                mImmediateAnimatorOut.start();
-                mImmediateAnimatorOut.end();
+//                mImmediateAnimatorOut.setTarget(indicator);
+//                mImmediateAnimatorOut.start();
+//                mImmediateAnimatorOut.end();
             } else {
                 indicator.setBackgroundResource(mIndicatorUnselectedBackgroundResId);
-                mImmediateAnimatorIn.setTarget(indicator);
-                mImmediateAnimatorIn.start();
-                mImmediateAnimatorIn.end();
+//                mImmediateAnimatorIn.setTarget(indicator);
+//                mImmediateAnimatorIn.start();
+//                mImmediateAnimatorIn.end();
             }
 
             if (mIndicatorCreatedListener != null) {
