@@ -8,14 +8,13 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationSet;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
+
 import androidx.annotation.Nullable;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
@@ -138,7 +137,7 @@ class BaseCircleIndicator extends LinearLayout {
 
             @Override
             public void onAnimationEnd(Animator animation, boolean isReverse) {
-
+                animatorIn.removeAllUpdateListeners();
             }
 
             @Override
@@ -172,7 +171,7 @@ class BaseCircleIndicator extends LinearLayout {
 
             @Override
             public void onAnimationEnd(Animator animation, boolean isReverse) {
-
+                animatorOut.removeAllUpdateListeners();
             }
 
             @Override
