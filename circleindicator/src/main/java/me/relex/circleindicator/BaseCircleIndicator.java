@@ -71,6 +71,8 @@ class BaseCircleIndicator extends LinearLayout {
         if (isInEditMode()) {
             createIndicators(3, 1);
         }
+
+        refreshAnimation();
     }
 
     private Config handleTypedArray(Context context, AttributeSet attrs) {
@@ -229,8 +231,6 @@ class BaseCircleIndicator extends LinearLayout {
 
             }
         });
-
-        refreshAnimation();
     }
 
     public interface IndicatorCreatedListener {
