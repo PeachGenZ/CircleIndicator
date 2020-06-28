@@ -2,17 +2,22 @@ package me.relex.circleindicator;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AnimationSet;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 class BaseCircleIndicator extends LinearLayout {
 
@@ -29,6 +34,9 @@ class BaseCircleIndicator extends LinearLayout {
     protected Animator mAnimatorIn;
     protected Animator mImmediateAnimatorOut;
     protected Animator mImmediateAnimatorIn;
+
+    protected ValueAnimator animatorIn;
+    protected ValueAnimator animatorOut;
 
     protected int mLastPosition = -1;
 
@@ -118,6 +126,75 @@ class BaseCircleIndicator extends LinearLayout {
 
         setOrientation(config.orientation == VERTICAL ? VERTICAL : HORIZONTAL);
         setGravity(config.gravity >= 0 ? config.gravity : Gravity.CENTER);
+
+        animatorIn = ValueAnimator.ofFloat(1f, 3f);
+        animatorIn.setInterpolator(new FastOutSlowInInterpolator());
+        animatorIn.setDuration(300);
+        animatorIn.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation, boolean isReverse) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation, boolean isReverse) {
+
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                animatorIn.removeAllUpdateListeners();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        animatorOut = ValueAnimator.ofFloat(3f, 1f);
+        animatorOut.setInterpolator(new FastOutSlowInInterpolator());
+        animatorOut.setDuration(300);
+        animatorOut.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation, boolean isReverse) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation, boolean isReverse) {
+
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                animatorOut.removeAllUpdateListeners();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
     }
 
     public interface IndicatorCreatedListener {
@@ -218,30 +295,54 @@ class BaseCircleIndicator extends LinearLayout {
             return;
         }
 
-        if (mAnimatorIn.isRunning()) {
-            mAnimatorIn.end();
-            mAnimatorIn.cancel();
+        if (animatorIn.isRunning()) {
+            animatorIn.end();
+            animatorIn.cancel();
         }
 
-        if (mAnimatorOut.isRunning()) {
-            mAnimatorOut.end();
-            mAnimatorOut.cancel();
+        if (animatorOut.isRunning()) {
+            animatorOut.end();
+            animatorOut.cancel();
         }
 
         View currentIndicator;
         if (mLastPosition >= 0 && (currentIndicator = getChildAt(mLastPosition)) != null) {
+//            currentIndicatorOriginalWidth = currentIndicator.getMeasuredWidth();
             currentIndicator.setBackgroundResource(mIndicatorUnselectedBackgroundResId);
-            mAnimatorIn.setTarget(currentIndicator);
-            mAnimatorIn.start();
+//            mAnimatorIn.setTarget(currentIndicator);
+//            mAnimatorIn.start();
+            playOutAnimation(currentIndicator, mIndicatorWidth);
         }
 
         View selectedIndicator = getChildAt(position);
         if (selectedIndicator != null) {
+//            selectedIndicatorOriginalWidth = selectedIndicator.getMeasuredWidth();
             selectedIndicator.setBackgroundResource(mIndicatorBackgroundResId);
-            mAnimatorOut.setTarget(selectedIndicator);
-            mAnimatorOut.start();
+//            mAnimatorOut.setTarget(selectedIndicator);
+//            mAnimatorOut.start();
+            playInAnimation(selectedIndicator, mIndicatorWidth);
         }
         mLastPosition = position;
+    }
+
+    protected void playInAnimation(View view, int originalWidth) {
+        animatorIn.addUpdateListener(animation -> {
+                    ViewGroup.LayoutParams params = view.getLayoutParams();
+                    params.width = (int) (originalWidth * ((float) animation.getAnimatedValue()));
+                    view.setLayoutParams(params);
+                }
+        );
+        animatorIn.start();
+    }
+
+    protected void playOutAnimation(View view, int originalWidth) {
+        animatorOut.addUpdateListener(animation -> {
+                    ViewGroup.LayoutParams params = view.getLayoutParams();
+                    params.width = (int) (originalWidth * ((float) animation.getAnimatedValue()));
+                    view.setLayoutParams(params);
+                }
+        );
+        animatorOut.start();
     }
 
     protected class ReverseInterpolator implements Interpolator {
