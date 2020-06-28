@@ -12,10 +12,12 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 class BaseCircleIndicator extends LinearLayout {
@@ -72,7 +74,7 @@ class BaseCircleIndicator extends LinearLayout {
             createIndicators(3, 1);
         }
 
-        refreshAnimation();
+        refreshSize();
     }
 
     private Config handleTypedArray(Context context, AttributeSet attrs) {
@@ -381,21 +383,25 @@ class BaseCircleIndicator extends LinearLayout {
         backToNormalAnimation.start();
     }
 
-    protected void playImmediateBackToNormalAnimation(View view, int originalWidth) {
-        immediateBackToNormalAnimation.addUpdateListener(animation -> {
-                    ViewGroup.LayoutParams params = view.getLayoutParams();
-                    params.width = (int) (originalWidth * ((float) animation.getAnimatedValue()));
-                    view.setLayoutParams(params);
-                }
-        );
-        immediateBackToNormalAnimation.start();
+    protected void setViewWidth(View view, int originalWidth) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.width = originalWidth;
+        view.setLayoutParams(params);
     }
 
-    protected void refreshAnimation() {
-        for(int index = 0; index < getChildCount(); index++) {
-            View nextChild = getChildAt(index);
-            playImmediateBackToNormalAnimation(nextChild, mIndicatorWidth);
-        }
+    protected void refreshSize() {
+        ViewTreeObserver viewTreeObserver = getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener (new ViewTreeObserver.OnGlobalLayoutListener() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+            @Override
+            public void onGlobalLayout() {
+                getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                for (int index = 0; index < getChildCount(); index++) {
+                    View nextChild = getChildAt(index);
+                    setViewWidth(nextChild, mIndicatorWidth);
+                }
+            }
+        });
     }
 
     protected class ReverseInterpolator implements Interpolator {
