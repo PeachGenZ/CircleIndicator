@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -73,8 +74,6 @@ class BaseCircleIndicator extends LinearLayout {
         if (isInEditMode()) {
             createIndicators(3, 1);
         }
-
-        refreshSize();
     }
 
     private Config handleTypedArray(Context context, AttributeSet attrs) {
@@ -350,6 +349,8 @@ class BaseCircleIndicator extends LinearLayout {
 //            mAnimatorIn.setTarget(currentIndicator);
 //            mAnimatorIn.start();
             playBackToNormalAnimation(currentIndicator, mIndicatorWidth);
+        } else {
+            refreshSize();
         }
 
         View selectedIndicator = getChildAt(position);
@@ -396,6 +397,8 @@ class BaseCircleIndicator extends LinearLayout {
             @Override
             public void onGlobalLayout() {
                 getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                Log.e("ANIM", String.valueOf(getChildCount()));
+                Log.e("ANIM", String.valueOf(mIndicatorWidth));
                 for (int index = 0; index < getChildCount(); index++) {
                     View nextChild = getChildAt(index);
                     setViewWidth(nextChild, mIndicatorWidth);

@@ -1,6 +1,7 @@
 package me.relex.circleindicator.sample.fragment;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
+
 import me.relex.circleindicator.CircleIndicator2;
 import me.relex.circleindicator.sample.R;
 import me.relex.circleindicator.sample.SampleRecyclerAdapter;
@@ -25,7 +29,7 @@ public class RecyclerViewFragment extends Fragment {
     }
 
     @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        mAdapter = new SampleRecyclerAdapter(5);
+        mAdapter = new SampleRecyclerAdapter(1);
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
 
@@ -37,12 +41,16 @@ public class RecyclerViewFragment extends Fragment {
         PagerSnapHelper pagerSnapHelper = new PagerSnapHelper();
         pagerSnapHelper.attachToRecyclerView(recyclerView);
 
+        //Gravity Snap
+        GravitySnapHelper gravitySnapper = new GravitySnapHelper(Gravity.START);
+        gravitySnapper.attachToRecyclerView(recyclerView);
+
         // CircleIndicator2 for RecyclerView
         CircleIndicator2 indicator = view.findViewById(R.id.indicator);
-        indicator.attachToRecyclerView(recyclerView, pagerSnapHelper);
+        indicator.attachToRecyclerView(recyclerView, gravitySnapper);
 
         // Scroll To Position
-        layoutManager.scrollToPosition(2);
+//        layoutManager.scrollToPosition(2);
 
         // Observe Data Change
         mAdapter.registerAdapterDataObserver(indicator.getAdapterDataObserver());
