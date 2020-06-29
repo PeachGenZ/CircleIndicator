@@ -44,6 +44,9 @@ public class CircleIndicator2 extends BaseCircleIndicator {
         createIndicators();
         recyclerView.removeOnScrollListener(mInternalOnScrollListener);
         recyclerView.addOnScrollListener(mInternalOnScrollListener);
+        if (recyclerView.getAdapter() != null && recyclerView.getAdapter().getItemCount() > 0) {
+            animatePageSelected(0);
+        }
     }
 
     private void createIndicators() {
