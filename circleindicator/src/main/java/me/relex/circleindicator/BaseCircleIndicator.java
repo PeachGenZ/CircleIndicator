@@ -130,7 +130,7 @@ class BaseCircleIndicator extends LinearLayout {
         setOrientation(config.orientation == VERTICAL ? VERTICAL : HORIZONTAL);
         setGravity(config.gravity >= 0 ? config.gravity : Gravity.CENTER);
 
-        immediateBackToNormalAnimation = ValueAnimator.ofFloat(4f, 1f);
+        immediateBackToNormalAnimation = ValueAnimator.ofFloat(1f, 4f);
         immediateBackToNormalAnimation.setInterpolator(new FastOutSlowInInterpolator());
         immediateBackToNormalAnimation.setDuration(0);
         immediateBackToNormalAnimation.addListener(new Animator.AnimatorListener() {
@@ -198,7 +198,7 @@ class BaseCircleIndicator extends LinearLayout {
 
             }
         });
-        backToNormalAnimation = ValueAnimator.ofFloat(4f, 1f);
+        backToNormalAnimation = ValueAnimator.ofFloat(1f, 4f);
         backToNormalAnimation.setInterpolator(new FastOutSlowInInterpolator());
         backToNormalAnimation.setDuration(300);
         backToNormalAnimation.addListener(new Animator.AnimatorListener() {
